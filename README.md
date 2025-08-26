@@ -10,7 +10,7 @@
 - [x] I
 - [ ] J
 
-## HW2
+## HW2 (Linear search)
 - [x] A
 - [x] B
 - [x] C
