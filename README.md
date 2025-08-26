@@ -10,15 +10,15 @@
 - [x] I
 - [ ] J
 
-## HW2
+## HW2 (Linear search)
 - [x] A
 - [x] B
 - [x] C
-- [ ] D
-- [ ] E
-- [ ] F
-- [ ] G
-- [ ] H
+- [x] D
+- [x] E
+- [x] F
+- [x] G
+- [x] H
 - [ ] I
 - [ ] J
 
