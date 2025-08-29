@@ -1,57 +1,67 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"math"
+	"os"
+	"strconv"
 )
 
 func main() {
-	var num int
-	var numbers []int
+	in := bufio.NewReader(os.Stdin)
+	bank := make(map[string]int)
+
+	var op, name1, name2 string
+	var amount int
 	for {
-		_, err := fmt.Scan(&num)
+		_, err := fmt.Fscan(in, &op)
 		if err != nil {
 			break
 		}
-		numbers = append(numbers, num)
+		switch op {
+		case "DEPOSIT":
+			fmt.Fscan(in, &name1, &amount)
+			Deposit(bank, name1, amount)
+		case "WITHDRAW":
+			fmt.Fscan(in, &name1, &amount)
+			Withdraw(bank, name1, amount)
+		case "BALANCE":
+			fmt.Fscan(in, &name1)
+			fmt.Println(Balance(bank, name1))
+		case "INCOME":
+			fmt.Fscan(in, &amount)
+			Income(bank, amount)
+		case "TRANSFER":
+			fmt.Fscan(in, &name1, &name2, &amount)
+			Transfer(bank, name1, name2, amount)
+		}
 	}
-
-	fmt.Println(solve(numbers))
 }
 
-func solve(a []int) (int, int) {
-	if len(a) == 2 {
-		if a[0] > a[1] {
-			return a[1], a[0]
-		} else {
-			return a[0], a[1]
-		}
-	}
-	mxPos1 := math.MinInt
-	mxPos2 := math.MinInt
-	mnNeg1 := math.MaxInt
-	mnNeg2 := math.MaxInt
-	for _, n := range a {
-		if n > 0 {
-			if n > mxPos1 {
-				mxPos2 = mxPos1
-				mxPos1 = n
-			} else if n > mxPos2 {
-				mxPos2 = n
-			}
-		} else {
-			if n < mnNeg1 {
-				mnNeg2 = mnNeg1
-				mnNeg1 = n
-			} else if n < mnNeg2 {
-				mnNeg2 = n
-			}
-		}
+func Deposit(bank map[string]int, name string, amount int) {
+	bank[name] += amount
+}
 
+func Withdraw(bank map[string]int, name string, amount int) {
+	bank[name] -= amount
+}
+
+func Balance(bank map[string]int, name string) string {
+	if _, ok := bank[name]; ok {
+		return strconv.Itoa(bank[name])
 	}
-	if mnNeg1*mnNeg2 < mxPos1*mxPos2 {
-		return mxPos2, mxPos1
-	} else {
-		return mnNeg1, mnNeg2
+	return "ERROR"
+}
+
+func Income(bank map[string]int, amount int) {
+	for v := range bank {
+		if bank[v] > 0 {
+			bank[v] += int(float64(bank[v]) * float64(amount) / 100.0)
+		}
 	}
+}
+
+func Transfer(bank map[string]int, name1, name2 string, amount int) {
+	bank[name1] -= amount
+	bank[name2] += amount
 }

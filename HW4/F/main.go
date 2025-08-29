@@ -1,44 +1,44 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"slices"
+	"os"
+	"sort"
 )
 
 func main() {
-	var num, amount int
-	fmt.Scan(&amount)
-	var numbers []int
-	for ; amount > 0; amount-- {
-		_, err := fmt.Scan(&num)
+	in := bufio.NewReader(os.Stdin)
+	buys := make(map[string]map[string]int)
+	var buyer, item string
+	var amount int
+	for {
+		_, err := fmt.Fscan(in, &buyer, &item, &amount)
 		if err != nil {
 			break
 		}
-		numbers = append(numbers, num)
-	}
-	num, res := solve(numbers)
-	fmt.Println(num)
-	for i := 0; i < num; i++ {
-		fmt.Println(res[i], " ")
-	}
-}
-
-func solve(a []int) (int, []int) {
-	var curM []int
-	j := len(a) - 1
-	amount := 0
-	var res []int
-	for i := 0; i < j; i++ {
-		curM = append(curM, a[i])
-		if a[i] != a[j] {
-			amount += len(curM)
-			res = append(res, curM...)
-			j += len(curM) - 1
-			curM = make([]int, 0)
+		if _, ok := buys[buyer]; !ok {
+			buys[buyer] = make(map[string]int)
+			buys[buyer][item] += amount
 		} else {
-			j--
+			buys[buyer][item] += amount
 		}
 	}
-	slices.Reverse(res)
-	return amount, res
+	outerKeys := make([]string, 0, len(buys))
+	for k := range buys {
+		outerKeys = append(outerKeys, k)
+	}
+	sort.Strings(outerKeys)
+
+	for _, outer := range outerKeys {
+		fmt.Println(outer + ":")
+		innerKeys := make([]string, 0, len(buys[outer]))
+		for k := range buys[outer] {
+			innerKeys = append(innerKeys, k)
+		}
+		sort.Strings(innerKeys)
+		for _, inner := range innerKeys {
+			fmt.Printf("%s %d\n", inner, buys[outer][inner])
+		}
+	}
 }
